@@ -1,0 +1,177 @@
+package URL; 
+  
+ import java.awt.EventQueue; 
+ import javax.swing.JFrame; 
+ import javax.swing.JLabel; 
+ import javax.swing.SwingConstants; 
+ import javax.swing.JTextField; 
+ import java.awt.Toolkit; 
+ import java.awt.Window.Type; 
+ import java.awt.datatransfer.Clipboard; 
+ import java.awt.datatransfer.StringSelection; 
+ import java.awt.Dimension; 
+ import javax.swing.JButton; 
+ import java.awt.Font; 
+ import java.awt.event.ActionListener; 
+ import java.io.BufferedReader; 
+ import java.io.InputStreamReader; 
+ import java.net.HttpURLConnection; 
+ import java.net.URL; 
+ import java.awt.event.ActionEvent; 
+  
+ public class URLShortner { 
+  
+         private JFrame frame; 
+         private JTextField longURLField,textField; 
+         JButton btnNewButton,close; 
+         JLabel lblNewLabel, lblNewLabel_1,lblNewLabel2,lblNewLabel_3 ; 
+         String str; 
+         //Launch the application. 
+         public static void main(String[] args) { 
+                 EventQueue.invokeLater(new Runnable() { 
+                         public void run() { 
+                                 try { 
+                                         URLShortner window = new URLShortner(); 
+                                         window.frame.setVisible(true); 
+                                 } catch (Exception e) { 
+                                         e.printStackTrace(); 
+                                 } 
+                         } 
+                 }); 
+         } 
+  
+         // Create the application.  
+         public URLShortner()  
+         { 
+                 initialize(); 
+         } 
+         //          Initialize the contents of the frame. 
+           void initialize() { 
+                 frame = new JFrame(); 
+                 frame.setBounds(100, 100, 450, 300); 
+                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+                 frame.getContentPane().setLayout(null); 
+  
+                 lblNewLabel = new JLabel("URL Shortner"); 
+                 lblNewLabel.setFont(new Font("SansSerif", Font.BOLD, 12)); 
+                 lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER); 
+                 lblNewLabel.setBounds(162, 16, 112, 16); 
+                 frame.getContentPane().add(lblNewLabel); 
+  
+                 lblNewLabel_1 = new JLabel("Enter a long URL"); 
+                 lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER); 
+                 lblNewLabel_1.setBounds(162, 44, 112, 16); 
+                 frame.getContentPane().add(lblNewLabel_1); 
+  
+                 longURLField = new JTextField(); 
+                 longURLField.setFont(new Font("SansSerif", Font.PLAIN, 13)); 
+                 longURLField.setBounds(116, 82, 199, 28); 
+                 frame.getContentPane().add(longURLField); 
+                 longURLField.setColumns(10); 
+  
+                 //generate button 
+                 JButton generateButton = new JButton("Generate Short URL"); 
+                 generateButton.setBounds(140, 133, 154, 28); 
+                 frame.getContentPane().add(generateButton); 
+  
+                 generateButton.addActionListener(new ActionListener()  
+                 { 
+                         public void actionPerformed(ActionEvent e)  
+                         {                 
+  
+                                 String longURL = longURLField.getText(); 
+  
+                                 try { 
+                         URL url = new URL("http://tinyurl.com/api-create.php?url=" + longURL); 
+                         HttpURLConnection connection = (HttpURLConnection) url.openConnection(); 
+                         connection.setRequestMethod("GET"); 
+  
+                         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream())); 
+                         String tinyURL = in.readLine(); 
+                         in.close(); 
+                         //copy Short URL 
+                         String sy=tinyURL; 
+                         //calling frame2 
+                         frame=new JFrame("URL Shortner"); 
+                                     frame.getContentPane().setFont(new Font("Arial", Font.BOLD, 12)); 
+                                     frame.getContentPane().setMaximumSize(new Dimension(214, 160)); 
+                                     frame.setType(Type.UTILITY); 
+  
+                                     // setting close operation 
+                                     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
+                                     frame.getContentPane().setLayout(null); 
+  
+                                     //frame 2  
+                                     textField = new JTextField(); 
+                                     textField.setFont(new Font("Arial", Font.BOLD, 12)); 
+                                     textField.setBounds(200, 50, 165, 19); 
+                                     frame.getContentPane().add(textField); 
+                                     textField.setColumns(10); 
+                                     // getting short url to store in frame2 textfield 
+                                     String str=longURLField.getText(); 
+                                     textField.setText(sy); 
+  
+                                     lblNewLabel2 = new JLabel("URL Shortner"); 
+                                     lblNewLabel2.setFont(new Font("Arial", Font.BOLD, 12)); 
+                                     lblNewLabel2.setHorizontalAlignment(SwingConstants.CENTER); 
+                                     lblNewLabel.setBounds(140, 10, 78, 14); 
+                                     frame.getContentPane().add(lblNewLabel); 
+  
+                                     lblNewLabel_3 = new JLabel("Short URL :"); 
+                                     lblNewLabel_3.setBounds(22, 54, 68, 13); 
+                                     frame.getContentPane().add(lblNewLabel_3); 
+  
+                                     close = new JButton("Close"); 
+                                     close.addActionListener(new ActionListener() { 
+                                             public void actionPerformed(ActionEvent e) { 
+                                                     System.exit(0);; 
+                                             } 
+                                     }); 
+                                     close.setBounds(232, 123, 94, 21); 
+                                     frame.getContentPane().add(close); 
+  
+                                     btnNewButton = new JButton("Copy "); 
+                                     btnNewButton.addActionListener(new ActionListener() { 
+                                             public void actionPerformed(ActionEvent e) 
+                                             { 
+                                                     Clipboard clip=Toolkit.getDefaultToolkit().getSystemClipboard(); 
+                                                     StringSelection strsel= new StringSelection(sy); 
+                                                     clip.setContents(strsel, strsel); 
+                                             } 
+                                     }); 
+                                     btnNewButton.setBounds(22, 123, 113, 21); 
+                                     frame.getContentPane().add(btnNewButton); 
+                                     frame.setSize(400, 260); 
+                                     // makes the frame visible 
+                                     frame.setVisible(true);              
+                     }                                  
+                                 catch (Exception ex)  
+                                 { 
+                         ex.printStackTrace(); 
+                     } 
+                         } 
+                 }); 
+  
+  
+                 // reset button 
+                 JButton btnNewButton_1 = new JButton("Reset"); 
+                 btnNewButton_1.addActionListener(new ActionListener() { 
+                         public void actionPerformed(ActionEvent e)  
+                         { 
+                                 longURLField .setText(null); 
+                         } 
+                 }); 
+                 btnNewButton_1.setBounds(37, 191, 86, 28); 
+                 frame.getContentPane().add(btnNewButton_1); 
+  
+                 //exit button 
+                 JButton Exit = new JButton("Exit"); 
+                 Exit.addActionListener(new ActionListener() { 
+                         public void actionPerformed(ActionEvent e) { 
+                                 System.exit(0); 
+                         } 
+                 }); 
+                 Exit.setBounds(310, 191, 86, 28); 
+                 frame.getContentPane().add(Exit); 
+         } 
+ }
